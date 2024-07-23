@@ -13,6 +13,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// penser a ajouter les "ENGINE = InnoDB" à chaque table, et changer les CONSTRAINTS ON DELETE par CASCADE
+
 model User {
   id             String   @id @default(uuid())
   first_name     String
@@ -21,19 +23,28 @@ model User {
   password_hash  String
   pseudo         String
   pseudo_id      Int
-  role           String   @default("guest")
+  role_id        String
   avatar         String
   activate_token String
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
-  Order          Order[]
-  Review         Review[]
+
+  role             Role               @relation(fields: [role_id], references: [id])
+  Order            Order[]
+  Review           Review[]
+  User_Has_Product User_Has_Product[]
+}
+
+model Role {
+  id   String @id @default(uuid())
+  role String @unique @default("guest")
+  User User[]
 }
 
 model Order {
   id                String              @id @default(uuid())
-  status            String              @default("pending")
-  // si l'utilisateur a déjà un autre "Order" en "pending", il recevra un message d'avertissement avec le contenu de son ancien Order, qu'il pourra éditer, transférer ou supprimer
+  status            String              @default("empty")
+  // si l'utilisateur a déjà un autre Order en "empty" ou "pending", il recevra un message d'avertissement avec le contenu de son ancien Order, qu'il pourra éditer, transférer ou supprimer
   user_id           String
   user              User                @relation(fields: [user_id], references: [id])
   createdAt         DateTime            @default(now())
@@ -41,41 +52,66 @@ model Order {
   Order_has_Product Order_has_Product[]
 }
 
+model User_Has_Product {
+  id         String   @id @default(uuid())
+  user_id    String
+  product_id String
+  quantity   Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [user_id], references: [id])
+  product    Product  @relation(fields: [product_id], references: [id])
+}
+
 model Product {
-  id                String              @id @default(uuid())
-  name              String              @unique
-  image             String
-  description       String
-  price             Float
-  stock             Int
-  promo             Float               @default(0)
-  category_id       String
-  category          Category            @relation(fields: [category_id], references: [id])
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  Review            Review[]
-  Order_has_Product Order_has_Product[]
+  id                   String                 @id @default(uuid())
+  name                 String                 @unique
+  slug                 String                 @unique
+  image                String
+  description          String
+  price                Float
+  stock                Int
+  promo                Float                  @default(0)
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  Review               Review[]
+  Order_has_Product    Order_has_Product[]
+  Product_Has_Category Product_Has_Category[]
+  User_Has_Product     User_Has_Product[]
 }
 
 model Review {
-  id         String   @id @default(uuid())
-  rating     Int
-  comment    String
-  user_id    String
-  product_id String
-  user       User     @relation(fields: [user_id], references: [id])
-  product    Product  @relation(fields: [product_id], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id                   String            @id @default(uuid())
+  rating               Int
+  comment              String
+  user_id              String
+  product_id           String
+  order_has_product_id String
+  user                 User              @relation(fields: [user_id], references: [id])
+  product              Product           @relation(fields: [product_id], references: [id])
+  order_has_product    Order_has_Product @relation(fields: [order_has_product_id], references: [id])
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+}
+
+model Product_Has_Category {
+  id          String   @id @default(uuid())
+  product_id  String
+  category_id String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  product     Product  @relation(fields: [product_id], references: [id])
+  category    Category @relation(fields: [category_id], references: [id])
 }
 
 model Category {
-  id        String    @id @default(uuid())
-  name      String    @unique
-  image     String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  Product   Product[]
+  id                   String                 @id @default(uuid())
+  name                 String                 @unique
+  slug                 String                 @unique
+  image                String
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  Product_Has_Category Product_Has_Category[]
 }
 
 model Order_has_Product {
@@ -87,4 +123,5 @@ model Order_has_Product {
   product    Product  @relation(fields: [product_id], references: [id])
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  Review     Review[]
 }

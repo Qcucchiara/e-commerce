@@ -1,10 +1,13 @@
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { ForbiddenException, Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
+import * as argon from 'argon2';
 
-export class jwtUtils {
+export class JwtUtils {
   constructor(
     private jwt: JwtService,
-    private config: ConfigService,
+    private readonly config: ConfigService,
   ) {}
   async signToken(userId: string): Promise<{ access_token: string }> {
     const payload = {

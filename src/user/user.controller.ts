@@ -6,17 +6,19 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
+import { JwtGuard } from 'src/auth/guards';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  create(@Body() dto) {
-    return this.userService.create(dto);
-  }
+  // @Post()
+  // create(@Body() dto) {
+  //   return this.userService.create(dto);
+  // }
 
   @Get()
   findAll() {
@@ -28,9 +30,9 @@ export class UserController {
     return this.userService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() dto) {
-    return this.userService.update(id, dto);
+  @Patch(':idUser/:idRole')
+  update(@Param('idUser') idUser: string, @Param('idRole') idRole: string) {
+    return this.userService.updateRole(idUser, idRole);
   }
 
   @Delete(':id')

@@ -2,23 +2,23 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class ReviewService {
-  create(createReviewDto) {
-    return 'This action adds a new review';
+  create() {
+    return 'work in progress';
   }
 
   findAll() {
-    return `This action returns all review`;
+    return `work in progress`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} review`;
+  findOne() {
+    return `work in progress`;
   }
 
-  update(id: number, updateReviewDto) {
-    return `This action updates a #${id} review`;
+  update() {
+    return `work in progress`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} review`;
+  remove() {
+    return `work in progress`;
   }
 }

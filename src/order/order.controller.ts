@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Query,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { InitOrderDto, InitOrderHasProductDto } from './dto/init.order.dto';
@@ -14,7 +16,13 @@ import {
   UpdateOrderHasProductQuantityDto,
   UpdateOrderstatusDto,
 } from './dto/update.order.dto';
+import { JwtGuard } from 'src/auth/guards';
+import { query } from 'express';
+import { Pagination } from 'src/utils/DTO/pagination.dto';
+import { GetUser } from 'src/auth/decorator';
+import { User } from '@prisma/client';
 
+@UseGuards(JwtGuard)
 @Controller('order')
 export class OrderController {
   constructor(
@@ -23,26 +31,34 @@ export class OrderController {
   ) {}
 
   @Post()
-  createEmptyOrder(@Body() dto: InitOrderDto) {
-    return this.orderService.create(dto);
+  createEmptyOrder(@GetUser() user: User) {
+    return this.orderService.create(user);
   }
 
   @Post('/element')
-  createOrderElement(@Body() dto: InitOrderHasProductDto) {
-    return this.orderHasProductService.create(dto);
+  createOrderElement(
+    @Body() dto: InitOrderHasProductDto,
+    @GetUser() user: User,
+  ) {
+    return this.orderHasProductService.create(dto, user);
   }
 
   @Get()
-  findAll() {
-    return this.orderService.findAll();
+  findAll(@Query() query: Pagination) {
+    return this.orderService.findAll(query);
   }
 
-  @Get('/:orderId')
+  @Get('/user')
+  findManyFromUser(@GetUser() user: User, @Query() query: Pagination) {
+    return this.orderService.findManyFromUser(query, user);
+  }
+
+  @Get('/one/:orderId')
   findOne(@Param('orderId') orderId: string) {
     return this.orderService.findOne(orderId);
   }
 
-  @Patch('/status/:id')
+  @Patch('/status/:id/status')
   updateOrderStatus(
     @Param('id') id: string,
     @Body() dto: UpdateOrderstatusDto,

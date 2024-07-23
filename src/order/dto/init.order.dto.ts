@@ -15,6 +15,10 @@ export class InitOrderHasProductDto {
 
   @IsNotEmpty()
   @IsUUID()
+  cartElement_id: string;
+
+  @IsNotEmpty()
+  @IsUUID()
   order_id: string;
 
   @IsNotEmpty()
@@ -26,10 +30,4 @@ export class InitOrderDto {
   @IsNotEmpty()
   @IsUUID()
   user_id: string;
-
-  // @IsArray()
-  // @ArrayMinSize(1)
-  // @ValidateNested({ each: true })
-  // @Type(() => InitOrderHasProductDto)
-  // arrayProduct: InitOrderHasProductDto[];
 }

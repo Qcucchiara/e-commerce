@@ -1,4 +1,12 @@
-import { IsInt, IsUUID, Max, MaxLength, Min, MinLength } from 'class-validator';
+import {
+  IsArray,
+  IsInt,
+  IsUUID,
+  Max,
+  MaxLength,
+  Min,
+  MinLength,
+} from 'class-validator';
 
 export class UpdateProductDto {
   @MinLength(2)
@@ -23,5 +31,6 @@ export class UpdateProductDto {
   promo: number;
 
   @IsUUID()
-  category_id: string;
+  @IsArray()
+  categories_ids: string[];
 }

@@ -1,5 +1,5 @@
 import { IsEnum, IsInt, IsNotEmpty } from 'class-validator';
-import { OrderStatus } from '../utils/types';
+import { OrderStatus } from '../types/types';
 
 export class UpdateOrderstatusDto {
   @IsNotEmpty()

@@ -1,0 +1,30 @@
+# j'ai pas réussi a me connecter à la db une avec ce docker compose:
+#    DATABASE_URL= "mysql://1sn4c2H7u9I7c05g247c:Ky8p84YLDCEj3Ozlsr7N@localhost:5432/office-supply-hub"
+#    MYSQL_USER = "1sn4c2H7u9I7c05g247c"
+#    MYSQL_PASSWORD = "Ky8p84YLDCEj3Ozlsr7N"
+#    MYSQL_ROOT_PASSWORD = "S7GZQfT4T1BCjnabBpx0LExA8igPAuPQMhJz1yXMSB8xN7E6Ze"
+
+version: '3.9'
+services:
+  mysql-db:
+    image: mysql:latest
+    ports:
+      - 5432:5432
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    networks:
+      - OfficeSupplyHub
+  php-my-admin:
+    image: phpmyadmin:latest
+    ports:
+      - 5434:5434
+    environment:
+      PMA_HOST: custom-mysql-container
+      PMA_PORT: 5432
+    networks:
+      - OfficeSupplyHub
+networks:
+  OfficeSupplyHub:
+    external: true

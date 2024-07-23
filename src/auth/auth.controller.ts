@@ -8,6 +8,7 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
+  HttpCode,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SigninDto, SignupDto } from './dto';
@@ -39,6 +40,7 @@ export class AuthController {
   }
 
   @Post('/signin')
+  @HttpCode(200)
   signin(@Body() dto: SigninDto) {
     return this.authService.signin(dto);
   }

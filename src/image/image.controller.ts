@@ -7,7 +7,6 @@ import {
   Get,
   Res,
 } from '@nestjs/common';
-import { ImageService } from './image.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -17,37 +16,41 @@ import { existsSync, createReadStream } from 'fs';
 
 @Controller('image')
 export class ImageController {
-  constructor(private readonly imageService: ImageService) {}
-  @Post('/upload/avatar')
+  @Post('/src/upload/product')
   @UseInterceptors(
-    FileInterceptor('file', {
+    FileInterceptor('image', {
       storage: diskStorage({
-        destination: 'uploads',
+        destination: 'uploads/product',
         filename: (req, file, callback) => {
+          const imageName = file.originalname.split('.');
           const uniqueSuffix =
             Date.now() + '-' + Math.round(Math.random() * 1e9);
           const ext = extname(file.originalname);
-          callback(null, `${file.originalname}-${uniqueSuffix}${ext}`);
+          callback(null, `${imageName[0]}-${uniqueSuffix}${ext}`);
         },
       }),
     }),
   )
-  uploadFile(@UploadedFile() file: Express.Multer.File) {
+  uploadProductImage(@UploadedFile() file: Express.Multer.File) {
     return file;
   }
+
   @Get('/view/:file/:filename')
   viewImage(
     @Param('file') file: string,
     @Param('filename') filename: string,
     @Res() res: Response,
   ) {
-    const filePath = join(__dirname, '..', '..', `uploads/${file}`, filename);
-
+    const filePath = join(__dirname, `../../../src/uploads/${file}`, filename);
     if (existsSync(filePath)) {
       const fileStream = createReadStream(filePath);
       fileStream.pipe(res);
     } else {
-      res.status(404).json({ message: 'Image not found' });
+      const fileStream = createReadStream(
+        join(__dirname, `../../../src/uploads/default-product-image.png`),
+      );
+      fileStream.pipe(res);
+      // res.status(404).json({ message: 'Image not found' });
     }
   }
 }

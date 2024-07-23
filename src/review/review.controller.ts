@@ -6,16 +6,19 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { ReviewService } from './review.service';
+import { JwtGuard } from 'src/auth/guards';
 
+@UseGuards(JwtGuard)
 @Controller('review')
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
   @Post()
   create(@Body() createReviewDto) {
-    return this.reviewService.create(createReviewDto);
+    return this.reviewService.create();
   }
 
   @Get()
@@ -25,16 +28,16 @@ export class ReviewController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.reviewService.findOne(+id);
+    return this.reviewService.findOne();
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateReviewDto) {
-    return this.reviewService.update(+id, updateReviewDto);
+    return this.reviewService.update();
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.reviewService.remove(+id);
+    return this.reviewService.remove();
   }
 }

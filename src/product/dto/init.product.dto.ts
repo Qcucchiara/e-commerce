@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsInt,
   IsNotEmpty,
   IsUUID,
@@ -14,8 +15,7 @@ export class InitProductDto {
   @MaxLength(12)
   name: string;
 
-  @IsNotEmpty()
-  image: any;
+  image: string;
 
   @IsNotEmpty()
   @MinLength(15)
@@ -37,5 +37,6 @@ export class InitProductDto {
 
   @IsNotEmpty()
   @IsUUID()
-  category_id: string;
+  @IsArray()
+  categories_ids: string[];
 }
